@@ -1,21 +1,25 @@
 const express = require("express");
 const app = express();
+const taskRoute = require("./routes/tasks");
+const connectDB = require("./db/connect");
+require("dotenv").config();
+
+app.use(express.json());
+
 const PORT = 5000;
 
-app.get("/api/v1/tasks", (req, res) => {
-    res.send("タスクをすべて取得しました。");
-});
-app.post("/api/v1/tasks", (req, res) => {
-    res.send("タスクを新規作成しました。");
-});
-app.get("/api/v1/tasks/:id", (req, res) => {
-    res.send("ある特定のタスクを取得しました。");
-});
-app.patch("/api/v1/tasks/:id", (req, res) => {
-    res.send("ある特定のタスクを更新しました。");
-});
-app.delete("/api/v1/tasks/:id", (req, res) => {
-    res.send("ある特定のタスクを削除しました。");
-});
+// ルーティング設計
+app.use("/api/v1/tasks/", taskRoute);
 
-app.listen(PORT, console.log("Server Started."));
+// データベースと接続
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URL);
+        app.listen(PORT, console.log("Server Started."));        
+    } catch (err) {
+        console.log(err);
+    }
+};
+
+start();
+
